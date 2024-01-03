@@ -28,7 +28,7 @@ namespace Api.Features.Rag.Commands
             {
                 await Task.Delay(0, cancellationToken);
                 // get prompt embeddings from embedding model
-                var embeddings = await _embeddingModel.GetEmbeddingsForPromptAsync(request.Request.Prompt, cancellationToken);
+                var embeddings = await _embeddingModel.GetEmbeddingsForTextAsync(request.Request.Prompt, cancellationToken);
                 // do embeddings similarity search from vector DB
                 var searchResults = await _vectorDb.GetSimilarVectorsAsync(embeddings, cancellationToken);
                 // create LLM provider prompt from template (prompt + search results)
