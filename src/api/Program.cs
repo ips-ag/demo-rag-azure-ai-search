@@ -1,9 +1,19 @@
+using Api.Extensions.ExceptionHandler;
+using Api.Features.Extensions;
+using Api.Features.Rag.Commands;
+using Api.Features.Rag.Models;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetailsExceptionHandler();
+
+builder.Services.AddFeatures();
 
 var app = builder.Build();
 
@@ -14,29 +24,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseExceptionHandler();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapPost(
+        "/rag/base",
+        ([FromBody] SearchRequest request, [FromServices] IMediator mediator) =>
+        {
+            var command = new SearchCommand(request);
+            return mediator.Send(command);
+        })
+    .Produces<SearchResponse>()
+    .ProducesValidationProblem()
+    .WithName("GetResultUsingBaseRag")
+    .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
