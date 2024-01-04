@@ -1,4 +1,5 @@
 using Api.Azure.OpenAi.Extensions;
+using Api.Azure.Search.Extensions;
 using Api.Extensions.ExceptionHandler;
 using Api.Features.Extensions;
 using Api.Features.Rag.Commands;
@@ -14,7 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetailsExceptionHandler();
 
-builder.Services.AddOpenAi();
+builder.Services.AddOpenAi().AddAiSearch();
 builder.Services.AddFeatures();
 
 var app = builder.Build();
