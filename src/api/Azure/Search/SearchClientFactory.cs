@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Api.Azure.Search
 {
-    internal class SearchClientFactory
+    public class SearchClientFactory
     {
         private readonly IOptionsMonitor<AiSearchOptions> _configuration;
 

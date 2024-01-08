@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Api.Features.Rag
 {
-    internal class EmbeddingModel
+    public class EmbeddingModel
     {
         private readonly IOptionsMonitor<OpenAiOptions> _configuration;
         private readonly OpenAIClient _client;
@@ -15,7 +15,7 @@ namespace Api.Features.Rag
             _client = client;
         }
 
-        public async Task<float[]> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
+        public async Task<ReadOnlyMemory<float>> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
         {
             var configuration = _configuration.CurrentValue;
             var adjustedText = text.ReplaceLineEndings(" ");
@@ -23,8 +23,19 @@ namespace Api.Features.Rag
             {
                 DeploymentName = configuration.Embedding.DeploymentName, Input = { adjustedText }
             };
-            var response = await _client.GetEmbeddingsAsync(options, cancellationToken);
-            return response.Value.Data[0].Embedding.ToArray();
+            Embeddings embeddings = await _client.GetEmbeddingsAsync(options, cancellationToken);
+            return embeddings.Data[0].Embedding;
+        }
+
+        public async Task<int> GetEmbeddingsDimensionsAsync(CancellationToken cancellationToken)
+        {
+            var configuration = _configuration.CurrentValue;
+            var options = new EmbeddingsOptions
+            {
+                DeploymentName = configuration.Embedding.DeploymentName, Input = { "test" }
+            };
+            Embeddings embeddings = await _client.GetEmbeddingsAsync(options, cancellationToken);
+            return embeddings.Data[0].Embedding.Length;
         }
     }
 }

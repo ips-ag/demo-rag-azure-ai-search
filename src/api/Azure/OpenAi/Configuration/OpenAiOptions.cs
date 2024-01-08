@@ -17,8 +17,7 @@ namespace Api.Azure.OpenAi.Configuration
         public required string ApiKey { get; set; }
 
         [DataMember(Name = "completion")]
-        [Required]
-        public required CompletionOptions Completion { get; set; }
+        public required CompletionOptions? Completion { get; set; }
 
         [DataMember(Name = "embedding")]
         [Required]

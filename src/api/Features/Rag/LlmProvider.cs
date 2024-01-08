@@ -18,7 +18,8 @@ namespace Api.Features.Rag
         public async Task<string> GetResponseAsync(string prompt, CancellationToken cancellationToken)
         {
             var configuration = _configuration.CurrentValue;
-            var completion = configuration.Completion;
+            var completion = configuration.Completion ??
+                throw new InvalidOperationException("Completion options are not configured");
             var options = new ChatCompletionsOptions
             {
                 DeploymentName = completion.DeploymentName,

@@ -11,8 +11,7 @@ namespace Api.Azure.OpenAi.Extensions
         {
             services.AddOptions<OpenAiOptions>()
                 .BindConfiguration(OpenAiOptions.SectionName)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+                .ValidateDataAnnotations();
             services.AddScoped<OpenAIClient>(
                 sp =>
                 {

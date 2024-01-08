@@ -11,8 +11,7 @@ namespace Api.Azure.Search.Extensions
         {
             services.AddOptions<AiSearchOptions>()
                 .BindConfiguration(AiSearchOptions.SectionName)
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
+                .ValidateDataAnnotations();
             services.AddSingleton<SearchClientFactory>();
             services.AddScoped<SearchIndexClient>(
                 sp =>
