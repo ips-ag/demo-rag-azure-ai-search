@@ -15,7 +15,7 @@ namespace Api.Features.Rag
             _client = client;
         }
 
-        public async Task<IReadOnlyList<float>> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
+        public async Task<float[]> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
         {
             var configuration = _configuration.CurrentValue;
             var adjustedText = text.ReplaceLineEndings(" ");

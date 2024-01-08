@@ -19,7 +19,7 @@ namespace Api.Features.Rag
         {
             var configuration = _configuration.CurrentValue;
             var completion = configuration.Completion;
-            var options = new CompletionsOptions
+            var options = new ChatCompletionsOptions
             {
                 DeploymentName = completion.DeploymentName,
                 Temperature = completion.Temperature,
@@ -27,11 +27,11 @@ namespace Api.Features.Rag
                 NucleusSamplingFactor = completion.TopP,
                 FrequencyPenalty = completion.FrequencyPenalty,
                 PresencePenalty = completion.PresencePenalty,
-                Prompts = { prompt }
+                Messages = { new ChatRequestSystemMessage(prompt) }
             };
-            var response = await _client.GetCompletionsAsync(options, cancellationToken);
-            var choices = response.Value.Choices;
-            return choices.Count > 0 ? choices[0].Text : string.Empty;
+            ChatCompletions response = await _client.GetChatCompletionsAsync(options, cancellationToken);
+            var choices = response.Choices;
+            return choices.Count > 0 ? choices[0].Message.Content : string.Empty;
         }
     }
 }

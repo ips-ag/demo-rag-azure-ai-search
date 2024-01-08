@@ -1,4 +1,5 @@
 ﻿using Api.Azure.Search;
+using Api.Features.Rag.Models;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
@@ -23,27 +24,38 @@ namespace Api.Features.Rag
             _searchIndexClient = searchIndexClient;
         }
 
-        public async Task<string[]> GetSimilarVectorsAsync(
-            IReadOnlyList<float> vectors,
+        public async Task<IReadOnlyCollection<EntityResponse>> GetSimilarVectorsAsync(
+            float[] vectors,
             CancellationToken cancellationToken)
         {
             // await PopulateIndexAsync(cancellationToken);
 
-            // var searchClient = _searchClientFactory.CreateForIndex(IndexName);
-            // SearchResults<Hotel> response = await searchClient.SearchAsync<Hotel>(null,
-            //     new SearchOptions(vectorQueries:{ new VectorizedQuery() { Vector = vectorizedResult, KNearestNeighborsCount = 3, Fields = { "DescriptionVector" } } },
-            //     cancellationToken);
-            //
-            // int count = 0;
-            // Console.WriteLine($"Single Vector Search Results:");
-            // await foreach (SearchResult<Hotel> result in response.GetResultsAsync())
-            // {
-            //     count++;
-            //     Hotel doc = result.Document;
-            //     Console.WriteLine($"{doc.HotelId}: {doc.HotelName}");
-            // }
-            // Console.WriteLine($"Total number of search results:{count}");
-            throw new NotImplementedException();
+            var searchClient = _searchClientFactory.CreateForIndex(IndexName);
+            var searchOptions = new SearchOptions
+            {
+                VectorSearch = new VectorSearchOptions
+                {
+                    Queries =
+                    {
+                        new VectorizedQuery(vectors)
+                        {
+                            KNearestNeighborsCount = 3, Fields = { nameof(Hotel.DescriptionVector) }
+                        }
+                    }
+                }
+            };
+            SearchResults<Hotel> response = await searchClient.SearchAsync<Hotel>(
+                searchText: null,
+                options: searchOptions,
+                cancellationToken: cancellationToken);
+            var searchResults = new List<EntityResponse>();
+            await foreach (var result in response.GetResultsAsync())
+            {
+                var doc = result.Document;
+                var entity = new EntityResponse(doc.HotelId, doc.HotelName, doc.Description, result.Score);
+                searchResults.Add(entity);
+            }
+            return searchResults;
         }
 
         private async Task PopulateIndexAsync(CancellationToken cancellationToken)
