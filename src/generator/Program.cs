@@ -1,6 +1,7 @@
 ﻿using Api.Azure.OpenAi.Extensions;
 using Api.Azure.Search.Extensions;
 using Api.Features.Rag.Extensions;
+using Generator.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -22,6 +23,7 @@ namespace Generator
                 {
                     services.AddOpenAi().AddAiSearch();
                     services.AddBaseRag();
+                    services.AddSingleton<IEntityDataSource<Book>, BookDataSource>();
                     services.AddHostedService<VectorDb>();
                 });
             var host = builder.Build();

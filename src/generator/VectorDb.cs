@@ -4,6 +4,7 @@ using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
+using Generator.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,12 +13,15 @@ namespace Generator
 {
     internal class VectorDb : BackgroundService
     {
-        private const string IndexName = "hotels";
+        private const string IndexName = "books";
         private readonly IHostApplicationLifetime _applicationLifetime;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<VectorDb> _logger;
 
-        public VectorDb(IServiceScopeFactory scopeFactory, ILogger<VectorDb> logger, IHostApplicationLifetime applicationLifetime)
+        public VectorDb(
+            IServiceScopeFactory scopeFactory,
+            ILogger<VectorDb> logger,
+            IHostApplicationLifetime applicationLifetime)
         {
             _scopeFactory = scopeFactory;
             _logger = logger;
@@ -28,11 +32,27 @@ namespace Generator
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
             var serviceProvider = scope.ServiceProvider;
-            // create index
+            var embeddingModel = serviceProvider.GetRequiredService<EmbeddingModel>();
+            var searchIndexClient = serviceProvider.GetRequiredService<SearchIndexClient>();
+            await CreateIndexAsync(embeddingModel, searchIndexClient, cancellationToken);
+            var entityDataSource = serviceProvider.GetRequiredService<IEntityDataSource<Book>>();
+            var documents = await GetEntityDocumentsAsync(entityDataSource, embeddingModel, cancellationToken);
+            var searchClientFactory = serviceProvider.GetRequiredService<SearchClientFactory>();
+            var searchClient = searchClientFactory.CreateForIndex(IndexName);
+            await searchClient.IndexDocumentsAsync(
+                IndexDocumentsBatch.Upload(documents),
+                new IndexDocumentsOptions { ThrowOnAnyError = true },
+                cancellationToken: cancellationToken);
+        }
+
+        private static async Task CreateIndexAsync(
+            EmbeddingModel embeddingModel,
+            SearchIndexClient searchIndexClient,
+            CancellationToken cancellationToken)
+        {
             const string VectorSearchProfile = "my-vector-profile";
             const string VectorSearchHnswConfig = "my-hsnw-vector-config";
             const string VectorSearchKnnConfig = "my-knn-vector-config";
-            var embeddingModel = serviceProvider.GetRequiredService<EmbeddingModel>();
             var modelDimensions = await embeddingModel.GetEmbeddingsDimensionsAsync(cancellationToken);
             SearchIndex searchIndex = new(IndexName)
             {
@@ -52,17 +72,10 @@ namespace Generator
                         VectorSearchDimensions = modelDimensions,
                         VectorSearchProfileName = VectorSearchProfile
                     },
-                    new SearchableField(nameof(Entity.Category))
+                    new SearchableField(nameof(Entity.Author)) { IsFilterable = true, IsSortable = true },
+                    new SearchField(nameof(Entity.Year), SearchFieldDataType.Int32)
                     {
-                        IsFilterable = true, IsSortable = true, IsFacetable = true
-                    },
-                    new SearchField(
-                        nameof(Entity.CategoryVector),
-                        SearchFieldDataType.Collection(SearchFieldDataType.Single))
-                    {
-                        IsSearchable = true,
-                        VectorSearchDimensions = modelDimensions,
-                        VectorSearchProfileName = VectorSearchProfile
+                        IsFilterable = true, IsSortable = true
                     }
                 },
                 VectorSearch = new VectorSearch
@@ -75,63 +88,38 @@ namespace Generator
                     }
                 }
             };
-            var searchIndexClient = serviceProvider.GetRequiredService<SearchIndexClient>();
             await searchIndexClient.CreateOrUpdateIndexAsync(
                 index: searchIndex,
                 allowIndexDowntime: false,
                 onlyIfUnchanged: true,
                 cancellationToken: cancellationToken);
-
-            var hotelDocuments = await GetHotelDocumentsAsync(embeddingModel, cancellationToken);
-            var searchClientFactory = serviceProvider.GetRequiredService<SearchClientFactory>();
-            var searchClient = searchClientFactory.CreateForIndex(IndexName);
-            await searchClient.IndexDocumentsAsync(
-                IndexDocumentsBatch.Upload(hotelDocuments),
-                new IndexDocumentsOptions { ThrowOnAnyError = true },
-                cancellationToken: cancellationToken);
         }
 
-        private async Task<Entity[]> GetHotelDocumentsAsync(
+        private async Task<IReadOnlyCollection<Entity>> GetEntityDocumentsAsync(
+            IEntityDataSource<Book> entityData,
             EmbeddingModel embeddingModel,
             CancellationToken cancellationToken)
         {
-            var hotel1Description =
-                "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, " +
-                "and a really helpful concierge. The location is perfect -- right downtown, close to all " +
-                "the tourist attractions. We highly recommend this hotel.";
-            var hotel1DescriptionVector =
-                await embeddingModel.GetEmbeddingsForTextAsync(hotel1Description, cancellationToken);
-            var hotel1Category = "Luxury";
-            var hotel1CategoryVector =
-                await embeddingModel.GetEmbeddingsForTextAsync(hotel1Category, cancellationToken);
-            var hotel2Description = "Cheapest hotel in town. In fact, a motel.";
-            var hotel2DescriptionVector =
-                await embeddingModel.GetEmbeddingsForTextAsync(hotel2Description, cancellationToken);
-            var hotel2Category = "Budget";
-            var hotel2CategoryVector =
-                await embeddingModel.GetEmbeddingsForTextAsync(hotel2Category, cancellationToken);
-            return
-            [
-                new Entity
+            var models = entityData.Get();
+            var count = 0;
+            List<Entity> entities = [];
+            foreach (var model in models)
+            {
+                var id = ++count + "";
+                var descriptionVector =
+                    await embeddingModel.GetEmbeddingsForTextAsync(model.Description, cancellationToken);
+                var entity = new Entity
                 {
-                    Id = "1",
-                    Name = "Fancy Stay",
-                    Description = hotel1Description,
-                    DescriptionVector = hotel1DescriptionVector,
-                    Category = hotel1Category,
-                    CategoryVector = hotel1CategoryVector
-                },
-                new Entity
-                {
-                    Id = "2",
-                    Name = "Roach Motel",
-                    Description = hotel2Description,
-                    DescriptionVector = hotel2DescriptionVector,
-                    Category = hotel2Category,
-                    CategoryVector = hotel2CategoryVector
-                }
-                // Add more hotel documents here...
-            ];
+                    Id = id,
+                    Name = model.Name,
+                    Description = model.Description,
+                    DescriptionVector = descriptionVector,
+                    Author = model.Author,
+                    Year = model.Year
+                };
+                entities.Add(entity);
+            }
+            return entities;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -154,10 +142,10 @@ namespace Generator
         {
             public string Id { get; set; }
             public string Name { get; set; }
+            public string Author { get; set; }
+            public int Year { get; set; }
             public string Description { get; set; }
             public ReadOnlyMemory<float> DescriptionVector { get; set; }
-            public string Category { get; set; }
-            public ReadOnlyMemory<float> CategoryVector { get; set; }
         }
     }
 }

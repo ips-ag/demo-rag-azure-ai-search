@@ -7,7 +7,7 @@ namespace Api.Features.Rag
 {
     internal class VectorDb
     {
-        private const string IndexName = "hotels";
+        private const string IndexName = "books";
         private readonly SearchClientFactory _searchClientFactory;
 
         public VectorDb(SearchClientFactory searchClientFactory)
@@ -41,20 +41,22 @@ namespace Api.Features.Rag
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, result.Score);
+                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Author, doc.Year, result.Score);
                 searchResults.Add(entity);
             }
             return searchResults;
         }
 
+        // ReSharper disable UnusedAutoPropertyAccessor.Local
         private class Entity
         {
             public string Id { get; set; }
             public string Name { get; set; }
+            public string Author { get; set; }
+            public int Year { get; set; }
             public string Description { get; set; }
             public ReadOnlyMemory<float> DescriptionVector { get; set; }
-            public string Category { get; set; }
-            public ReadOnlyMemory<float> CategoryVector { get; set; }
         }
+        // ReSharper restore UnusedAutoPropertyAccessor.Local
     }
 }

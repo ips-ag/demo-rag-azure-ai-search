@@ -26,14 +26,11 @@ namespace Api.Features.Rag.Commands
 
             public async Task<SearchResponse> Handle(SearchCommand request, CancellationToken cancellationToken)
             {
-                await Task.Delay(0, cancellationToken);
-                // get prompt embeddings from embedding model
-                var embeddings = await _embeddingModel.GetEmbeddingsForTextAsync(request.Request.Prompt, cancellationToken);
-                // do embeddings similarity search from vector DB
+                var embeddings = await _embeddingModel.GetEmbeddingsForTextAsync(
+                    request.Request.Prompt,
+                    cancellationToken);
                 var searchResults = await _vectorDb.GetSimilarVectorsAsync(embeddings, cancellationToken);
-                // create LLM provider prompt from template (prompt + search results)
                 var prompt = _promptFactory.CreateFromSearchResults(request.Request.Prompt, searchResults);
-                // get LLM provider response
                 var response = await _llmProvider.GetResponseAsync(prompt, cancellationToken);
                 return new SearchResponse { Response = response };
             }

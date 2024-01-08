@@ -21,6 +21,8 @@ namespace Api.Features.Rag
             {
                 sb.AppendLine($"Name is {bestResult.Name}");
                 sb.AppendLine($"Description is '{bestResult.Description}'");
+                sb.AppendLine($"Author is '{bestResult.Author}'");
+                sb.AppendLine($"Year is '{bestResult.Year}'");
             }
             sb.AppendLine("--------------");
             sb.AppendLine("note: Be concise and dont add any other details if you don't know about it.");
