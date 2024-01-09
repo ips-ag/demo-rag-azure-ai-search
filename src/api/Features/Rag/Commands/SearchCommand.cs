@@ -30,7 +30,8 @@ namespace Api.Features.Rag.Commands
                     request.Request.Prompt,
                     cancellationToken);
                 var searchResults = await _vectorDb.GetSimilarVectorsAsync(embeddings, cancellationToken);
-                var prompt = _promptFactory.CreateFromSearchResults(request.Request.Prompt, searchResults);
+                var bestResult = searchResults.FirstOrDefault();
+                var prompt = _promptFactory.CreateFromSearchResults(request.Request.Prompt, bestResult);
                 var response = await _llmProvider.GetResponseAsync(prompt, cancellationToken);
                 return new SearchResponse { Response = response };
             }
