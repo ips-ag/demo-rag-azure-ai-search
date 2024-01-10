@@ -1,3 +1,4 @@
+using Api.Features.HybridRag.Extensions;
 using Api.Features.Rag.Extensions;
 
 namespace Api.Features.Extensions
@@ -12,7 +13,8 @@ namespace Api.Features.Extensions
                     cfg.RegisterServicesFromAssembly(typeof(FeatureExtensions).Assembly);
                     cfg.Lifetime = ServiceLifetime.Scoped;
                 });
-            services.AddBaseRag();
+            services.AddRag();
+            services.AddHybridRag();
             return services;
         }
     }

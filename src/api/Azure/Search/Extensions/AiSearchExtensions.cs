@@ -25,6 +25,7 @@ namespace Api.Azure.Search.Extensions
                     return new SearchIndexClient(endpoint, keyCredential);
                 });
             services.AddScoped<IVectorDb, AzureAiSearch>();
+            services.AddScoped<IKeywordSearch, AzureAiSearch>();
             return services;
         }
     }

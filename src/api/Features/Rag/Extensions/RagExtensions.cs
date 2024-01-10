@@ -1,8 +1,8 @@
 namespace Api.Features.Rag.Extensions
 {
-    internal static class BaseRagExtensions
+    internal static class RagExtensions
     {
-        public static IServiceCollection AddBaseRag(this IServiceCollection services)
+        public static IServiceCollection AddRag(this IServiceCollection services)
         {
             services.AddSingleton<PromptFactory>();
             return services;
