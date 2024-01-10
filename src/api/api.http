@@ -1,6 +1,6 @@
 @api_HostAddress = http://localhost:5000
 
-POST {{api_HostAddress}}/rag/base/
+POST {{api_HostAddress}}/rag/
 Accept: application/json
 Content-Type: application/json
 
@@ -9,3 +9,11 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{api_HostAddress}}/hybridrag/
+Accept: application/json
+Content-Type: application/json
+
+{
+"prompt": "dystopian future"
+}
