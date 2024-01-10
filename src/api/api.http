@@ -5,7 +5,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "prompt": "This is a test. This is only a test."
+    "prompt": "dystopian future"
 }
 
 ###

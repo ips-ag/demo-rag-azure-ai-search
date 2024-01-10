@@ -22,7 +22,6 @@ namespace Generator
                 services =>
                 {
                     services.AddOpenAi().AddAiSearch();
-                    services.AddBaseRag();
                     services.AddSingleton<IEntityDataSource<Book>, BookDataSource>();
                     services.AddHostedService<VectorDb>();
                 });

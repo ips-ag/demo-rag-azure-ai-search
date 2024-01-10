@@ -1,4 +1,6 @@
 ﻿using Api.Azure.Search.Configuration;
+using Api.Features.Core;
+using Api.Features.Core.VectorDb;
 using Azure;
 using Azure.Search.Documents.Indexes;
 using Microsoft.Extensions.Options;
@@ -22,6 +24,7 @@ namespace Api.Azure.Search.Extensions
                     var keyCredential = new AzureKeyCredential(configuration.ApiKey);
                     return new SearchIndexClient(endpoint, keyCredential);
                 });
+            services.AddScoped<IVectorDb, AzureAiSearch>();
             return services;
         }
     }

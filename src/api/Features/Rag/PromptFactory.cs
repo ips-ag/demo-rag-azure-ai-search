@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Api.Features.Core.Domain;
 using Api.Features.Rag.Models;
 
 namespace Api.Features.Rag

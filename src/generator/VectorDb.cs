@@ -1,5 +1,6 @@
 ﻿using Api.Azure.Search;
-using Api.Features.Rag;
+using Api.Features.Core;
+using Api.Features.Core.VectorDb.Models;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
@@ -32,7 +33,7 @@ namespace Generator
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
             var serviceProvider = scope.ServiceProvider;
-            var embeddingModel = serviceProvider.GetRequiredService<EmbeddingModel>();
+            var embeddingModel = serviceProvider.GetRequiredService<IEmbeddingModel>();
             var searchIndexClient = serviceProvider.GetRequiredService<SearchIndexClient>();
             await CreateIndexAsync(embeddingModel, searchIndexClient, cancellationToken);
             var entityDataSource = serviceProvider.GetRequiredService<IEntityDataSource<Book>>();
@@ -46,7 +47,7 @@ namespace Generator
         }
 
         private static async Task CreateIndexAsync(
-            EmbeddingModel embeddingModel,
+            IEmbeddingModel embeddingModel,
             SearchIndexClient searchIndexClient,
             CancellationToken cancellationToken)
         {
@@ -97,7 +98,7 @@ namespace Generator
 
         private async Task<IReadOnlyCollection<Entity>> GetEntityDocumentsAsync(
             IEntityDataSource<Book> entityData,
-            EmbeddingModel embeddingModel,
+            IEmbeddingModel embeddingModel,
             CancellationToken cancellationToken)
         {
             var models = entityData.Get();
@@ -136,16 +137,6 @@ namespace Generator
             {
                 _applicationLifetime.StopApplication();
             }
-        }
-
-        private class Entity
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string Author { get; set; }
-            public int Year { get; set; }
-            public string Description { get; set; }
-            public ReadOnlyMemory<float> DescriptionVector { get; set; }
         }
     }
 }

@@ -1,22 +1,23 @@
-﻿using Api.Azure.Search;
-using Api.Features.Rag.Models;
+﻿using Api.Features.Core.Domain;
+using Api.Features.Core.VectorDb;
+using Api.Features.Core.VectorDb.Models;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 
-namespace Api.Features.Rag
+namespace Api.Azure.Search
 {
-    internal class VectorDb
+    internal class AzureAiSearch : IVectorDb
     {
         private const string IndexName = "books";
         private readonly SearchClientFactory _searchClientFactory;
 
-        public VectorDb(SearchClientFactory searchClientFactory)
+        public AzureAiSearch(SearchClientFactory searchClientFactory)
         {
             _searchClientFactory = searchClientFactory;
         }
 
         public async Task<IReadOnlyCollection<EntityResponse>> GetSimilarVectorsAsync(
-            ReadOnlyMemory<float> vectors,
+            float[] vectors,
             CancellationToken cancellationToken)
         {
             var searchClient = _searchClientFactory.CreateForIndex(IndexName);
@@ -46,17 +47,5 @@ namespace Api.Features.Rag
             }
             return searchResults;
         }
-
-        // ReSharper disable UnusedAutoPropertyAccessor.Local
-        private class Entity
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string Author { get; set; }
-            public int Year { get; set; }
-            public string Description { get; set; }
-            public ReadOnlyMemory<float> DescriptionVector { get; set; }
-        }
-        // ReSharper restore UnusedAutoPropertyAccessor.Local
     }
 }

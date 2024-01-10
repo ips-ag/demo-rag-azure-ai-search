@@ -1,4 +1,6 @@
-﻿using Api.Features.Rag.Models;
+﻿using Api.Features.Core;
+using Api.Features.Core.VectorDb;
+using Api.Features.Rag.Models;
 using MediatR;
 
 namespace Api.Features.Rag.Commands
@@ -7,16 +9,16 @@ namespace Api.Features.Rag.Commands
     {
         private class SearchCommandHandler : IRequestHandler<SearchCommand, SearchResponse>
         {
-            private readonly EmbeddingModel _embeddingModel;
-            private readonly VectorDb _vectorDb;
+            private readonly IEmbeddingModel _embeddingModel;
+            private readonly IVectorDb _vectorDb;
             private readonly PromptFactory _promptFactory;
-            private readonly LlmProvider _llmProvider;
+            private readonly ILlmProvider _llmProvider;
 
             public SearchCommandHandler(
-                EmbeddingModel embeddingModel,
-                VectorDb vectorDb,
+                IEmbeddingModel embeddingModel,
+                IVectorDb vectorDb,
                 PromptFactory promptFactory,
-                LlmProvider llmProvider)
+                ILlmProvider llmProvider)
             {
                 _embeddingModel = embeddingModel;
                 _vectorDb = vectorDb;
