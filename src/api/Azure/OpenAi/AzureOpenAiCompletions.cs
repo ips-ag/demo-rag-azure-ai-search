@@ -1,15 +1,16 @@
 ﻿using Api.Azure.OpenAi.Configuration;
+using Api.Features.Core;
 using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
 
-namespace Api.Features.Rag
+namespace Api.Azure.OpenAi
 {
-    internal class LlmProvider
+    internal class AzureOpenAiCompletions : ILlmProvider
     {
         private readonly IOptionsMonitor<OpenAiOptions> _configuration;
         private readonly OpenAIClient _client;
 
-        public LlmProvider(IOptionsMonitor<OpenAiOptions> configuration, OpenAIClient client)
+        public AzureOpenAiCompletions(IOptionsMonitor<OpenAiOptions> configuration, OpenAIClient client)
         {
             _configuration = configuration;
             _client = client;

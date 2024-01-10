@@ -1,4 +1,5 @@
 using Api.Azure.OpenAi.Configuration;
+using Api.Features.Core;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
@@ -21,6 +22,8 @@ namespace Api.Azure.OpenAi.Extensions
                     var keyCredential = new AzureKeyCredential(configuration.ApiKey);
                     return new OpenAIClient(endpoint, keyCredential);
                 });
+            services.AddScoped<IEmbeddingModel, AzureOpenAiEmbeddings>();
+            services.AddScoped<ILlmProvider, AzureOpenAiCompletions>();
             return services;
         }
     }
