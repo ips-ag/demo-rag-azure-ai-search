@@ -37,6 +37,7 @@ namespace Api.Features.HybridRag.Commands
                 var embeddings = await _embeddingModel.GetEmbeddingsForTextAsync(
                     request.Request.Prompt,
                     cancellationToken);
+                if (embeddings is null) return new SearchResponse { Response = string.Empty };
                 var searchResultsByVector = await _vectorDb.GetByVectorSimilarityAsync(embeddings, cancellationToken);
                 HashSet<EntityResponse> searchResults = [];
                 foreach (var result in searchResultsByVector) searchResults.Add(result);

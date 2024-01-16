@@ -1,4 +1,5 @@
-﻿using Api.Azure.Search;
+﻿using System.Runtime.CompilerServices;
+using Api.Azure.Search;
 using Api.Features.Core;
 using Api.Features.Core.VectorDb.Models;
 using Azure.Search.Documents;
@@ -6,6 +7,7 @@ using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
 using Generator.Data;
+using Generator.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -37,13 +39,16 @@ namespace Generator
             var searchIndexClient = serviceProvider.GetRequiredService<SearchIndexClient>();
             await CreateIndexAsync(embeddingModel, searchIndexClient, cancellationToken);
             var entityDataSource = serviceProvider.GetRequiredService<IEntityDataSource<Book>>();
-            var documents = await GetEntityDocumentsAsync(entityDataSource, embeddingModel, cancellationToken);
             var searchClientFactory = serviceProvider.GetRequiredService<SearchClientFactory>();
             var searchClient = searchClientFactory.CreateForIndex(IndexName);
-            await searchClient.IndexDocumentsAsync(
-                IndexDocumentsBatch.Upload(documents),
-                new IndexDocumentsOptions { ThrowOnAnyError = true },
-                cancellationToken: cancellationToken);
+            var documentsEnumerable = GetEntityDocumentsAsync(entityDataSource, embeddingModel, cancellationToken);
+            await foreach (var documents in documentsEnumerable.Batch(100).WithCancellation(cancellationToken))
+            {
+                await searchClient.IndexDocumentsAsync(
+                    IndexDocumentsBatch.Upload(documents),
+                    new IndexDocumentsOptions { ThrowOnAnyError = true },
+                    cancellationToken: cancellationToken);
+            }
         }
 
         private static async Task CreateIndexAsync(
@@ -73,7 +78,10 @@ namespace Generator
                         VectorSearchDimensions = modelDimensions,
                         VectorSearchProfileName = VectorSearchProfile
                     },
-                    new SearchableField(nameof(Entity.Author)) { IsFilterable = true, IsSortable = true },
+                    new SearchableField(nameof(Entity.Authors), collection: true)
+                    {
+                        IsFilterable = true, IsSortable = false
+                    },
                     new SearchField(nameof(Entity.Year), SearchFieldDataType.Int32)
                     {
                         IsFilterable = true, IsSortable = true
@@ -96,31 +104,30 @@ namespace Generator
                 cancellationToken: cancellationToken);
         }
 
-        private async Task<IReadOnlyCollection<Entity>> GetEntityDocumentsAsync(
+        private async IAsyncEnumerable<Entity> GetEntityDocumentsAsync(
             IEntityDataSource<Book> entityData,
             IEmbeddingModel embeddingModel,
-            CancellationToken cancellationToken)
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var models = entityData.Get();
+            var models = await entityData.GetAsync(cancellationToken);
             var count = 0;
-            List<Entity> entities = [];
             foreach (var model in models)
             {
                 var id = ++count + "";
-                var descriptionVector =
-                    await embeddingModel.GetEmbeddingsForTextAsync(model.Description, cancellationToken);
+                var descriptionVector = await embeddingModel.GetEmbeddingsForTextAsync(
+                    model.Description,
+                    cancellationToken);
                 var entity = new Entity
                 {
                     Id = id,
                     Name = model.Name,
                     Description = model.Description,
                     DescriptionVector = descriptionVector,
-                    Author = model.Author,
+                    Authors = model.Authors.Split(";", StringSplitOptions.RemoveEmptyEntries),
                     Year = model.Year
                 };
-                entities.Add(entity);
+                yield return entity;
             }
-            return entities;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

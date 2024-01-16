@@ -1,7 +1,7 @@
 ﻿namespace Generator.Data
 {
-    internal interface IEntityDataSource<out T>
+    internal interface IEntityDataSource<T>
     {
-        IReadOnlyCollection<T> Get();
+        Task<IReadOnlyCollection<T>> GetAsync(CancellationToken cancel);
     }
 }

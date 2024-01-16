@@ -25,3 +25,4 @@ Alternative is to use `dotnet user-secrets set` command to set the values. Follo
 * https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/embeddings
 * https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-create-index
 * https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/search/Azure.Search.Documents/samples/Sample07_VectorSearch_UsingRawVectorQuery.md
+* https://www.kaggle.com/datasets/dylanjcastillo/7k-books-with-metadata
