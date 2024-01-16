@@ -22,7 +22,7 @@ namespace Api.Features.HybridRag
                 foreach (var searchResult in searchResults)
                 {
                     sb.AppendLine(
-                        $"* Name is '{searchResult.Name}', Description is '{searchResult.Description}', Author is '{searchResult.Author}',Year is '{searchResult.Year}'");
+                        $"* Name is '{searchResult.Name}', Description is '{searchResult.Description}', Author is '{searchResult.Authors}',Year is '{searchResult.Year}'");
                 }
             }
             sb.AppendLine("--------------");

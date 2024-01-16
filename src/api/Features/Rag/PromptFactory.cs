@@ -19,7 +19,7 @@ namespace Api.Features.Rag
             else
             {
                 sb.AppendLine(
-                    $"Name is '{searchResult.Name}', Description is '{searchResult.Description}', Author is '{searchResult.Author}',Year is '{searchResult.Year}'");
+                    $"Name is '{searchResult.Name}', Description is '{searchResult.Description}', Author is '{searchResult.Authors}',Year is '{searchResult.Year}'");
             }
             sb.AppendLine("--------------");
             sb.AppendLine("note: Be concise and dont add any other details if you don't know about it.");

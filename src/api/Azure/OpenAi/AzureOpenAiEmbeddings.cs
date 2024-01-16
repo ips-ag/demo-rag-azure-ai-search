@@ -16,8 +16,9 @@ namespace Api.Azure.OpenAi
             _client = client;
         }
 
-        public async Task<float[]> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
+        public async Task<float[]?> GetEmbeddingsForTextAsync(string text, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(text)) return null;
             var configuration = _configuration.CurrentValue;
             var adjustedText = text.ReplaceLineEndings(" ");
             var options = new EmbeddingsOptions

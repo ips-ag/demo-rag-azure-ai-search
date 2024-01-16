@@ -31,6 +31,7 @@ namespace Api.Features.Rag.Commands
                 var embeddings = await _embeddingModel.GetEmbeddingsForTextAsync(
                     request.Request.Prompt,
                     cancellationToken);
+                if (embeddings is null) return new SearchResponse { Response = string.Empty };
                 var searchResults = await _vectorDb.GetByVectorSimilarityAsync(embeddings, cancellationToken);
                 var bestMatch = searchResults.FirstOrDefault();
                 var prompt = _promptFactory.CreateFromSearchResults(request.Request.Prompt, bestMatch);

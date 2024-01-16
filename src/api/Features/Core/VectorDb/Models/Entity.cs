@@ -6,9 +6,9 @@ namespace Api.Features.Core.VectorDb.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string Author { get; set; }
+        public ReadOnlyMemory<string> Authors { get; set; }
         public int Year { get; set; }
         public string Description { get; set; }
-        public ReadOnlyMemory<float> DescriptionVector { get; set; }
+        public ReadOnlyMemory<float>? DescriptionVector { get; set; }
     }
 }

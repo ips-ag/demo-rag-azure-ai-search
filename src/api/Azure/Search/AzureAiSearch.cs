@@ -24,7 +24,7 @@ namespace Api.Azure.Search
             var searchClient = _searchClientFactory.CreateForIndex(IndexName);
             var searchOptions = new SearchOptions
             {
-                QueryType = SearchQueryType.Simple, IncludeTotalCount = false, SearchMode = SearchMode.Any
+                QueryType = SearchQueryType.Simple, IncludeTotalCount = false, SearchMode = SearchMode.Any, Size = 5
             };
             SearchResults<Entity> response = await searchClient.SearchAsync<Entity>(
                 searchText: query,
@@ -34,7 +34,7 @@ namespace Api.Azure.Search
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Author, doc.Year);
+                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Authors.ToArray(), doc.Year);
                 searchResults.Add(entity);
             }
             return searchResults;
@@ -53,7 +53,7 @@ namespace Api.Azure.Search
                     {
                         new VectorizedQuery(vectors)
                         {
-                            KNearestNeighborsCount = 3, Fields = { nameof(Entity.DescriptionVector) }
+                            KNearestNeighborsCount = 5, Fields = { nameof(Entity.DescriptionVector) }
                         }
                     }
                 }
@@ -66,7 +66,7 @@ namespace Api.Azure.Search
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Author, doc.Year);
+                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Authors.ToArray(), doc.Year);
                 searchResults.Add(entity);
             }
             return searchResults;
