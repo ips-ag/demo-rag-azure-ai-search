@@ -18,8 +18,12 @@ namespace Api.Features.Rag
             }
             else
             {
+                var name = searchResult.Name;
+                var description = searchResult.Description;
+                var authors = string.Join(" and ", searchResult.Authors);
+                var year = searchResult.Year;
                 sb.AppendLine(
-                    $"Name is '{searchResult.Name}', Description is '{searchResult.Description}', Author is '{searchResult.Authors}',Year is '{searchResult.Year}'");
+                    $"Name is '{name}', Description is '{description}', Authors are '{authors}',Year is '{year}'");
             }
             sb.AppendLine("--------------");
             sb.AppendLine("note: Be concise and dont add any other details if you don't know about it.");

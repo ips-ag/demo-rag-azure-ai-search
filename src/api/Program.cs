@@ -4,6 +4,7 @@ using Api.Extensions.ExceptionHandler;
 using Api.Features.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using RagCommands = Api.Features.Rag.Commands;
 using RagModels = Api.Features.Rag.Models;
 using HybridRagCommands = Api.Features.HybridRag.Commands;
@@ -16,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.CustomSchemaIds((type) => type.FullName));
 builder.Services.AddProblemDetailsExceptionHandler();
+builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
 builder.Services.AddFeatures();
 builder.Services.AddOpenAi().AddAiSearch();
@@ -30,6 +32,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapPost(
         "/rag",
@@ -54,5 +59,13 @@ app.MapPost(
     .ProducesValidationProblem()
     .WithName("GetResultUsingHybridRag")
     .WithOpenApi();
+
+app.UseSpaStaticFiles();
+
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "ClientApp";
+    spa.UseReactDevelopmentServer(npmScript: "start");
+});
 
 app.Run();
