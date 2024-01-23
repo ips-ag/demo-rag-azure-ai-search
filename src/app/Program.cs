@@ -40,7 +40,7 @@ app.UseSpa(
     {
         spa.Options.SourcePath = "ClientApp";
         spa.Options.DevServerPort = 5173;
-        spa.UseReactDevelopmentServer(npmScript: "dev");
+        if (app.Environment.IsDevelopment()) spa.UseReactDevelopmentServer(npmScript: "dev");
     });
 
 app.Run();
