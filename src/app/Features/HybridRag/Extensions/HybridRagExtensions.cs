@@ -16,7 +16,7 @@ namespace Api.Features.HybridRag.Extensions
         public static IEndpointRouteBuilder MapHybridRagEndpoints(this IEndpointRouteBuilder app)
         {
             app.MapPost(
-                    "/hybridrag",
+                    "/hybrid-rag",
                     ([FromBody] SearchRequest request, [FromServices] IMediator mediator) =>
                     {
                         var command = new SearchCommand(request);
