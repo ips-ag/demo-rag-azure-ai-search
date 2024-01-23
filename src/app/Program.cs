@@ -3,7 +3,6 @@ using Api.Azure.Search.Extensions;
 using Api.Extensions.Endpoints;
 using Api.Extensions.ExceptionHandler;
 using Api.Features.Extensions;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.CustomSchemaIds(type => type.FullName));
 builder.Services.AddProblemDetailsExceptionHandler();
-builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
 
 builder.Services.AddFeatures();
 builder.Services.AddOpenAi().AddAiSearch();
@@ -20,6 +18,9 @@ builder.Services.AddOpenAi().AddAiSearch();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,19 +29,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
 app.MapFeatureEndpoints();
 
-app.UseSpaStaticFiles();
-
-app.UseSpa(
-    spa =>
-    {
-        spa.Options.SourcePath = "ClientApp";
-        spa.Options.DevServerPort = 5173;
-        spa.UseReactDevelopmentServer(npmScript: "dev");
-    });
+app.MapFallbackToFile("/index.html");
 
 app.Run();
