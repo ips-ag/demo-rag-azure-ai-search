@@ -1,0 +1,29 @@
+﻿.search-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    margin-left: 20%;
+}
+
+.search-bar__input {
+    font-size: 2rem;
+    max-width: 50%;
+    margin: 0.3rem 0.25rem;
+    border-radius: 10px;
+}
+
+.search-bar__button {
+    margin: 0.3rem 0.25rem;
+    font-size: 1.5rem;
+}
+
+.search-bar__spinner {
+    justify-content: center;
+    align-items: center;
+    margin: 0.3rem 0.25rem;
+}
+
+.search-result {
+    width: 90%;
+    white-space: pre-wrap;
+}
