@@ -34,7 +34,13 @@ namespace Api.Azure.Search
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Authors.ToArray(), doc.Year);
+                var entity = new EntityResponse(
+                    doc.Id,
+                    doc.Name,
+                    doc.Description,
+                    doc.Authors.ToArray(),
+                    doc.Year,
+                    doc.ThumbnailUrl);
                 searchResults.Add(entity);
             }
             return searchResults;
@@ -66,7 +72,13 @@ namespace Api.Azure.Search
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(doc.Id, doc.Name, doc.Description, doc.Authors.ToArray(), doc.Year);
+                var entity = new EntityResponse(
+                    doc.Id,
+                    doc.Name,
+                    doc.Description,
+                    doc.Authors.ToArray(),
+                    doc.Year,
+                    doc.ThumbnailUrl);
                 searchResults.Add(entity);
             }
             return searchResults;

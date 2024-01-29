@@ -5,5 +5,6 @@
         string Name,
         string Description,
         IReadOnlyCollection<string> Authors,
-        int Year);
+        int Year,
+        string? ThumbnailUrl);
 }

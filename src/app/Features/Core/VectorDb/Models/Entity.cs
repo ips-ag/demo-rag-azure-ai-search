@@ -10,5 +10,7 @@ namespace Api.Features.Core.VectorDb.Models
         public int Year { get; set; }
         public string Description { get; set; }
         public ReadOnlyMemory<float>? DescriptionVector { get; set; }
+
+        public string? ThumbnailUrl { get; set; }
     }
 }
