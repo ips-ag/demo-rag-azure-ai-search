@@ -34,7 +34,7 @@ export function Search() {
           </div>
         )}
       </div>
-      <pre className="search-result">{searchResult}</pre>
+      <div className="search-result">{searchResult}</div>
     </>
   );
 }
