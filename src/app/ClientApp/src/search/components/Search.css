@@ -2,14 +2,12 @@
     display: flex;
     flex-direction: row;
     justify-content: left;
-    padding-left: 20%;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
+    padding: 0.2rem 0.2rem 0.2rem 30%;
 }
 
 .search-bar__input {
     font-size: 2rem;
-    max-width: 75%;
+    max-width: 60%;
     margin: 0.3rem 0.25rem;
     border: none;
     border-radius: 10px;
@@ -27,8 +25,4 @@
 .search-bar__spinner {
     margin-left: 0.3rem;
     margin-right: 0.3rem;
-}
-
-.search-result {
-    padding: 0.5rem;
 }

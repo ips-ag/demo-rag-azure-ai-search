@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { search } from '../services';
 import { Loading } from './Loading';
 import './Search.css';
 
-export function Search() {
-  const [query, setQuery] = useState('');
+interface SearchProps {
+  query: string;
+  onSearchResultChange: (text: string) => void;
+}
+
+export function Search(props: SearchProps) {
+  const [query, setQuery] = useState(props.query);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState('');
+
+  useEffect(() => {
+    if (isLoading) return;
+    console.log('Query changed to: ' + props.query);
+    setQuery(props.query);
+    //console.log('Triggering search');
+    //handleSearch().catch(console.error);
+  }, [props.query]);
 
   const handleSearch = async () => {
+    console.log('Searching for: ' + query);
     setIsLoading(true);
     const result = await search(query);
-    if (result != undefined) setSearchResult(result);
+    if (result != undefined) {
+      props.onSearchResultChange(result);
+    }
     setIsLoading(false);
   };
 
@@ -34,7 +49,6 @@ export function Search() {
           </div>
         )}
       </div>
-      <div className="search-result">{searchResult}</div>
     </>
   );
 }

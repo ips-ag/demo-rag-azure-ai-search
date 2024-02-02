@@ -1,0 +1,15 @@
+﻿.recommendations {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    padding-left: 30%;
+    margin: 0.25rem;
+}
+
+.recommendations-item {
+    font-size: 1.25rem;
+    margin: 0.3rem 0.25rem;
+    border: none;
+    background-color: #0078D7;
+    color: #F3F2F1;
+}
