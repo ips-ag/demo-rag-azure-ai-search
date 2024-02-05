@@ -13,15 +13,14 @@ export function Search(props: SearchProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (props.query === '') return;
     if (isLoading) return;
-    // console.log('Query changed to: ' + props.query);
     setQuery(props.query);
-    // console.log('Triggering search');
     handleSearch(props.query).catch(console.error);
   }, [props.query]);
 
   const handleSearch = async (query: string) => {
-    // console.log('Searching for: ' + query);
+    if (props.query === '') return;
     setIsLoading(true);
     const result = await search(query);
     if (result != undefined) {
