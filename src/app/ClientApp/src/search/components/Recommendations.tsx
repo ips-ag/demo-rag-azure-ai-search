@@ -8,6 +8,7 @@ interface RecommendationsProps {
 export function Recommendations(props: RecommendationsProps) {
   return (
     <div className="recommendations">
+      <span className="recommendations-label">Or select one of the popular topics</span>
       {props.phrases.map((phrase, index) => (
         <button
           key={index}

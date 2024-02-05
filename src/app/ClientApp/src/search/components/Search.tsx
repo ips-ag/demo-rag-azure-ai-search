@@ -14,14 +14,14 @@ export function Search(props: SearchProps) {
 
   useEffect(() => {
     if (isLoading) return;
-    console.log('Query changed to: ' + props.query);
+    // console.log('Query changed to: ' + props.query);
     setQuery(props.query);
-    //console.log('Triggering search');
-    //handleSearch().catch(console.error);
+    // console.log('Triggering search');
+    handleSearch(props.query).catch(console.error);
   }, [props.query]);
 
-  const handleSearch = async () => {
-    console.log('Searching for: ' + query);
+  const handleSearch = async (query: string) => {
+    // console.log('Searching for: ' + query);
     setIsLoading(true);
     const result = await search(query);
     if (result != undefined) {
@@ -40,7 +40,7 @@ export function Search(props: SearchProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <button className="search-bar__button" type="submit" onClick={handleSearch} disabled={isLoading}>
+        <button className="search-bar__button" type="submit" onClick={() => handleSearch(query)} disabled={isLoading}>
           Search
         </button>
         {isLoading && (
