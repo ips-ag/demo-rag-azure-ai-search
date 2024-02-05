@@ -16,7 +16,7 @@ namespace Generator.Data
                 {
                     continue;
                 }
-                var book = new Book(model.Name, model.Description, model.Authors, model.Year.Value);
+                var book = new Book(model.Name, model.Description, model.Authors, model.Year.Value, model.Thumbnail);
                 books.Add(book);
             }
             return books;

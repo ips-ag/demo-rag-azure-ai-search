@@ -1,2 +1,4 @@
-export * from './SearchBar.tsx';
-export * from './Loading.tsx';
+export * from './Search';
+export * from './Loading';
+export * from './SearchResult';
+export * from './Recommendations';

@@ -1,12 +1,24 @@
 import './App.css';
-import { SearchBar } from './search';
+import { Recommendations, Search, SearchResult } from './search';
+import { useState } from 'react';
 
 function App() {
+  const [searchResult, setSearchResult] = useState('');
+  const [query, setQuery] = useState('');
+
+  const handleSearchResultChange = (newSearchResult: string) => {
+    setSearchResult(newSearchResult);
+  };
+
+  const onPhraseSelect = (phrase: string) => {
+    setQuery(phrase);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <SearchBar />
-      </header>
+    <div className="app-body">
+      <Search onSearchResultChange={handleSearchResultChange} query={query} />
+      <Recommendations phrases={['love story', 'space adventure', 'lovecraftian horror', 'dystopian future']} onPhraseSelect={onPhraseSelect} />
+      <SearchResult text={searchResult} />
     </div>
   );
 }

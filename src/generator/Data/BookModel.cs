@@ -17,5 +17,8 @@ namespace Generator.Data
 
         [Name("published_year")]
         public int? Year { get; set; }
+
+        [Name("thumbnail")]
+        public string? Thumbnail { get; set; }
     }
 }

@@ -85,6 +85,10 @@ namespace Generator
                     new SearchField(nameof(Entity.Year), SearchFieldDataType.Int32)
                     {
                         IsFilterable = true, IsSortable = true
+                    },
+                    new SimpleField(nameof(Entity.ThumbnailUrl), SearchFieldDataType.String)
+                    {
+                        IsFilterable = false, IsSortable = false, IsFacetable = false
                     }
                 },
                 VectorSearch = new VectorSearch
@@ -124,7 +128,8 @@ namespace Generator
                     Description = model.Description,
                     DescriptionVector = descriptionVector,
                     Authors = model.Authors.Split(";", StringSplitOptions.RemoveEmptyEntries),
-                    Year = model.Year
+                    Year = model.Year,
+                    ThumbnailUrl = model.ThumbnailUrl
                 };
                 yield return entity;
             }
