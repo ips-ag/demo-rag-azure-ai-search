@@ -22,12 +22,12 @@ Before running any application, you need to set the following environment variab
 * **AZURE__AISEARCH__ENDPOINT** - Azure AI Search endpoint URL
 
 Alternative is to use `dotnet user-secrets set` command to set the values. Following configuration keys need to be set:
-* Azure:OpenAI:ApiKey
-* Azure:OpenAI:Endpoint
-* Azure:OpenAI:Completion:DeploymentName
-* Azure:OpenAI:Embedding:DeploymentName
-* Azure:AiSearch:ApiKey
-* Azure:AiSearch:Endpoint
+* **Azure:OpenAI:ApiKey**
+* **Azure:OpenAI:Endpoint**
+* **Azure:OpenAI:Completion:DeploymentName**
+* **Azure:OpenAI:Embedding:DeploymentName**
+* **Azure:AiSearch:ApiKey**
+* **Azure:AiSearch:Endpoint**
 
 ### Data preparation
 
