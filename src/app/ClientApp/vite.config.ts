@@ -6,10 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '^/api': {
+      '^/rag': {
         target: 'http://localhost:5000/',
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        secure: false        
+      },
+      '^/hybrid-rag': {
+        target: 'http://localhost:5000/',
+        secure: false        
       }
     }
   }
