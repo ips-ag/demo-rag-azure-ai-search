@@ -2,7 +2,7 @@ import { SearchRequestModel, SearchResponseModel } from '../models';
 
 export async function search(query: string): Promise<string | undefined> {
   const requestModel: SearchRequestModel = { prompt: query };
-  const endpoint = `api/hybrid-rag`;
+  const endpoint = `hybrid-rag`;
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
