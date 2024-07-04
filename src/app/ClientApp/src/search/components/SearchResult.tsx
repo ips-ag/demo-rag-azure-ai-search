@@ -1,4 +1,5 @@
-﻿import './SearchResult.css';
+﻿import ReactMarkdown from 'react-markdown';
+import './SearchResult.css';
 
 interface SearchResultProps {
   text: string;
@@ -6,5 +7,12 @@ interface SearchResultProps {
 
 export function SearchResult(props: SearchResultProps) {
   let text = props.text;
-  return text && text.trim() != '' && <div className="search-result">{text}</div>;
+  return (
+    text &&
+    text.trim() != '' && (
+      <div className="search-result">
+        <ReactMarkdown>{text}</ReactMarkdown>
+      </div>
+    )
+  );
 }
