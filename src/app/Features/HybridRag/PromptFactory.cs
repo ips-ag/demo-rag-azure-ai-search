@@ -18,7 +18,7 @@ namespace Api.Features.HybridRag
             }
             else
             {
-                sb.AppendLine("Choose only one best match from the following:");
+                sb.AppendLine("Choose only one best match from the following items:");
                 foreach (var searchResult in searchResults)
                 {
                     var name = searchResult.Name;
@@ -30,7 +30,8 @@ namespace Api.Features.HybridRag
                 }
             }
             sb.AppendLine("--------------");
-            sb.AppendLine("note: Be concise and dont add any other details if you don't know about it.");
+            sb.AppendLine(
+                "note: Be concise and dont add any other details if you don't know about it. Choose only one match.");
             return sb.ToString();
         }
     }

@@ -1,4 +1,5 @@
 ﻿.search-result {
-    padding: 0.5rem 35% 0.5rem 15%;
+    padding: 0.5rem 15% 0.5rem 15%;
+    margin: 0.25rem;
     font-size: 1.5rem;
 }
