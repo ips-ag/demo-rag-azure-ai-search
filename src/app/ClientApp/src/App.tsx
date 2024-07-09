@@ -18,7 +18,7 @@ function App() {
     <div className="app-body">
       <Search onSearchResultChange={handleSearchResultChange} query={query} />
       <Recommendations
-        phrases={['dystopian future', 'love story', 'romantic novel', 'cosmic horror', 'I like Chewbacca']}
+        phrases={['love story', 'cosmic horror', 'I like Chewbacca']}
         onPhraseSelect={onPhraseSelect}
       />
       <SearchResult text={searchResult} />
