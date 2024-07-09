@@ -39,7 +39,7 @@ namespace Api.Features.HybridRag.Commands
                     cancellationToken);
                 if (embeddings is null) return new SearchResponse { Response = string.Empty };
                 var searchResultsByVector = await _vectorDb.GetByVectorSimilarityAsync(embeddings, cancellationToken);
-                HashSet<EntityResponse> searchResults = [];
+                HashSet<Book> searchResults = [];
                 foreach (var result in searchResultsByVector) searchResults.Add(result);
                 foreach (var result in searchResultsByKeyword) searchResults.Add(result);
                 var prompt = _promptFactory.CreateFromSearchResults(request.Request.Prompt, searchResults);

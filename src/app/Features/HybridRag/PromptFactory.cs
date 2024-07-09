@@ -5,7 +5,7 @@ namespace Api.Features.HybridRag
 {
     internal class PromptFactory
     {
-        public string CreateFromSearchResults(string requestPrompt, IReadOnlyCollection<EntityResponse> searchResults)
+        public string CreateFromSearchResults(string requestPrompt, IReadOnlyCollection<Book> searchResults)
         {
             var sb = new StringBuilder("Act as a search copilot, be helpful and informative.");
             sb.AppendLine("--------------");

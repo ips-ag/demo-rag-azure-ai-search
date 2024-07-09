@@ -10,7 +10,7 @@ namespace Generator.Data
             using var reader = new StreamReader("Data/books.csv");
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             List<Book> books = [];
-            await foreach (var model in csv.GetRecordsAsync<BookModel>(cancel))
+            await foreach (var model in csv.GetRecordsAsync<BookCsvModel>(cancel))
             {
                 if (model.Name is null || model.Description is null || model.Authors is null || model.Year is null)
                 {

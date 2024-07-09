@@ -17,7 +17,7 @@ namespace Api.Azure.Search
             _searchClientFactory = searchClientFactory;
         }
 
-        public async Task<IReadOnlyCollection<EntityResponse>> GetByKeywordAsync(
+        public async Task<IReadOnlyCollection<Book>> GetByKeywordAsync(
             string query,
             CancellationToken cancellationToken)
         {
@@ -26,15 +26,15 @@ namespace Api.Azure.Search
             {
                 QueryType = SearchQueryType.Simple, IncludeTotalCount = false, SearchMode = SearchMode.Any, Size = 5
             };
-            SearchResults<Entity> response = await searchClient.SearchAsync<Entity>(
+            SearchResults<BookDbModel> response = await searchClient.SearchAsync<BookDbModel>(
                 searchText: query,
                 options: searchOptions,
                 cancellationToken: cancellationToken);
-            var searchResults = new List<EntityResponse>();
+            var searchResults = new List<Book>();
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(
+                var entity = new Book(
                     doc.Id,
                     doc.Name,
                     doc.Description,
@@ -46,7 +46,7 @@ namespace Api.Azure.Search
             return searchResults;
         }
 
-        public async Task<IReadOnlyCollection<EntityResponse>> GetByVectorSimilarityAsync(
+        public async Task<IReadOnlyCollection<Book>> GetByVectorSimilarityAsync(
             float[] vectors,
             CancellationToken cancellationToken)
         {
@@ -59,20 +59,20 @@ namespace Api.Azure.Search
                     {
                         new VectorizedQuery(vectors)
                         {
-                            KNearestNeighborsCount = 5, Fields = { nameof(Entity.DescriptionVector) }
+                            KNearestNeighborsCount = 5, Fields = { nameof(BookDbModel.DescriptionVector) }
                         }
                     }
                 }
             };
-            SearchResults<Entity> response = await searchClient.SearchAsync<Entity>(
+            SearchResults<BookDbModel> response = await searchClient.SearchAsync<BookDbModel>(
                 searchText: null,
                 options: searchOptions,
                 cancellationToken: cancellationToken);
-            var searchResults = new List<EntityResponse>();
+            var searchResults = new List<Book>();
             await foreach (var result in response.GetResultsAsync())
             {
                 var doc = result.Document;
-                var entity = new EntityResponse(
+                var entity = new Book(
                     doc.Id,
                     doc.Name,
                     doc.Description,

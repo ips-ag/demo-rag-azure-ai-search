@@ -64,29 +64,29 @@ namespace Generator
             {
                 Fields =
                 {
-                    new SimpleField(nameof(Entity.Id), SearchFieldDataType.String)
+                    new SimpleField(nameof(BookDbModel.Id), SearchFieldDataType.String)
                     {
                         IsKey = true, IsFilterable = true, IsSortable = true, IsFacetable = true
                     },
-                    new SearchableField(nameof(Entity.Name)) { IsFilterable = true, IsSortable = true },
-                    new SearchableField(nameof(Entity.Description)) { IsFilterable = true },
+                    new SearchableField(nameof(BookDbModel.Name)) { IsFilterable = true, IsSortable = true },
+                    new SearchableField(nameof(BookDbModel.Description)) { IsFilterable = true },
                     new SearchField(
-                        nameof(Entity.DescriptionVector),
+                        nameof(BookDbModel.DescriptionVector),
                         SearchFieldDataType.Collection(SearchFieldDataType.Single))
                     {
                         IsSearchable = true,
                         VectorSearchDimensions = modelDimensions,
                         VectorSearchProfileName = VectorSearchProfile
                     },
-                    new SearchableField(nameof(Entity.Authors), collection: true)
+                    new SearchableField(nameof(BookDbModel.Authors), collection: true)
                     {
                         IsFilterable = true, IsSortable = false
                     },
-                    new SearchField(nameof(Entity.Year), SearchFieldDataType.Int32)
+                    new SearchField(nameof(BookDbModel.Year), SearchFieldDataType.Int32)
                     {
                         IsFilterable = true, IsSortable = true
                     },
-                    new SimpleField(nameof(Entity.ThumbnailUrl), SearchFieldDataType.String)
+                    new SimpleField(nameof(BookDbModel.ThumbnailUrl), SearchFieldDataType.String)
                     {
                         IsFilterable = false, IsSortable = false, IsFacetable = false
                     }
@@ -108,7 +108,7 @@ namespace Generator
                 cancellationToken: cancellationToken);
         }
 
-        private async IAsyncEnumerable<Entity> GetEntityDocumentsAsync(
+        private async IAsyncEnumerable<BookDbModel> GetEntityDocumentsAsync(
             IEntityDataSource<Book> entityData,
             IEmbeddingModel embeddingModel,
             [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -121,7 +121,7 @@ namespace Generator
                 var descriptionVector = await embeddingModel.GetEmbeddingsForTextAsync(
                     model.Description,
                     cancellationToken);
-                var entity = new Entity
+                var entity = new BookDbModel
                 {
                     Id = id,
                     Name = model.Name,
