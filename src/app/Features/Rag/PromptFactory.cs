@@ -5,7 +5,7 @@ namespace Api.Features.Rag
 {
     internal class PromptFactory
     {
-        public string CreateFromSearchResults(string requestPrompt, EntityResponse? searchResult)
+        public string CreateFromSearchResults(string requestPrompt, Book? searchResult)
         {
             var sb = new StringBuilder("Act as a search copilot, be helpful and informative.");
             sb.AppendLine("--------------");

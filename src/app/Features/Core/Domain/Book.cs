@@ -1,6 +1,6 @@
 ﻿namespace Api.Features.Core.Domain
 {
-    public record EntityResponse(
+    public record Book(
         string Id,
         string Name,
         string Description,

@@ -4,7 +4,7 @@ using CsvHelper.Configuration.Attributes;
 
 namespace Generator.Data
 {
-    internal class BookModel
+    internal class BookCsvModel
     {
         [Name("title")]
         public string? Name { get; set; }

@@ -5,7 +5,7 @@ namespace Api.Features.Core.VectorDb
 {
     internal interface IVectorDb
     {
-        Task<IReadOnlyCollection<EntityResponse>> GetByVectorSimilarityAsync(
+        Task<IReadOnlyCollection<Book>> GetByVectorSimilarityAsync(
             float[] vectors,
             CancellationToken cancellationToken);
     }
